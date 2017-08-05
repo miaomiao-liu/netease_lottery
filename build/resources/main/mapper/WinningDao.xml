@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.edu.swpu.cins.netease_lottery.dao.WinningDao">
+
+    <insert id="addLotteryDetail" useGeneratedKeys="true" keyProperty="id" parameterType="cn.edu.swpu.cins.netease_lottery.model.persistence.WinningDetail">
+
+        INSERT INTO winning_detail
+        (win_number,
+        big_small
+        )VALUES (
+        #{winNumber,typeHandler=cn.edu.swpu.cins.netease_lottery.typehandler.StringArrayTypeHandler},
+        #{bigSmall})
+
+    </insert>
+
+    <resultMap id="winningResultMap" type="cn.edu.swpu.cins.netease_lottery.model.persistence.WinningDetail">
+
+        <result typeHandler="cn.edu.swpu.cins.netease_lottery.typehandler.StringArrayTypeHandler" column="win_number"
+                javaType="list" jdbcType="VARCHAR" property="winNumber" />
+
+    </resultMap>
+
+    <select id="selectWinningNumber" parameterType="int" resultMap="winningResultMap">
+
+        SELECT
+        id, win_number,big_small
+        FROM winning_detail
+        WHERE id = #{id}
+
+    </select>
+
+</mapper>

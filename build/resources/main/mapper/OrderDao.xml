@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.edu.swpu.cins.netease_lottery.dao.OrderDao">
+
+
+    <select id="selectOrderByPetName" parameterType="String" resultType="cn.edu.swpu.cins.netease_lottery.model.persistence.OrderInfo">
+
+        SELECT * FROM order_info
+        WHERE pet_name = #{petName}
+
+    </select>
+
+    <insert id="addOrderSelectId" useGeneratedKeys="true" keyProperty="id" parameterType="cn.edu.swpu.cins.netease_lottery.model.persistence.OrderInfo">
+
+        INSERT INTO order_info
+        (pet_name,
+        det_time)
+        VALUES
+        (#{petName},
+        #{detTime})
+
+    </insert>
+
+    <delete id="deleteOrderById" parameterType="int">
+
+        DELETE FROM order_info
+        WHERE id = #{id}
+
+    </delete>
+
+    <update id="updateOrderDetailId" parameterType="cn.edu.swpu.cins.netease_lottery.model.persistence.OrderInfo">
+
+        UPDATE order_info SET
+        order_detail_id = #{orderDetailId,typeHandler=cn.edu.swpu.cins.netease_lottery.typehandler.StringArrayTypeHandler}
+        WHERE id = #{id}
+
+    </update>
+
+    <resultMap id="orderInfoResultMap" type="cn.edu.swpu.cins.netease_lottery.model.persistence.OrderInfo">
+
+        <result typeHandler="cn.edu.swpu.cins.netease_lottery.typehandler.StringArrayTypeHandler" column="order_detail_id" property="orderDetailId" />
+
+    </resultMap>
+
+    <select id="selectOrderDetailId" resultMap="orderInfoResultMap">
+
+        SELECT order_detail_id FROM order_info
+        WHERE id = #{id};
+
+    </select>
+
+
+    <insert id="addOrderDetail" useGeneratedKeys="true" keyProperty="id" parameterType="cn.edu.swpu.cins.netease_lottery.model.persistence.OrderDetail" >
+
+        INSERT INTO order_detail
+        (order_id,
+        winning_id,
+        lottery_name,
+        lottery_number,
+        multiple)
+        VALUES
+        (#{orderId},
+        #{winningId},
+        #{lotteryName},
+        #{lotteryNumber,typeHandler=cn.edu.swpu.cins.netease_lottery.typehandler.StringArrayTypeHandler},
+        #{multiple})
+
+    </insert>
+
+    <update id="updateOrderDetailAll" parameterType="cn.edu.swpu.cins.netease_lottery.model.persistence.OrderDetail">
+
+        UPDATE
+        order_detail
+        SET
+        is_win = #{isWin},win_grade = #{winGrade},win_money = #{winMoney}
+        WHERE id = #{id}
+
+    </update>
+
+
+    <resultMap id="orderDetailResultMap" type="cn.edu.swpu.cins.netease_lottery.model.persistence.OrderDetail">
+
+        <result typeHandler="cn.edu.swpu.cins.netease_lottery.typehandler.StringArrayTypeHandler"
+                javaType="list" jdbcType="VARCHAR" column="lottery_number" property="lotteryNumber" />
+
+    </resultMap>
+
+
+    <select id="selectOrderDetailByOrderId" parameterType="int" resultMap="orderDetailResultMap">
+
+        SELECT * FROM order_detail
+        WHERE order_id = #{orderId}
+
+    </select>
+
+</mapper>

@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.edu.swpu.cins.netease_lottery.dao.CustomerDao">
+
+    <select id="selectByPetName" parameterType="String" resultType="cn.edu.swpu.cins.netease_lottery.model.persistence.CustomerInfo">
+
+        SELECT * FROM customer_info
+        WHERE pet_name = #{petName}
+
+    </select>
+
+    <select id="selectByEmail" parameterType="String" resultType="cn.edu.swpu.cins.netease_lottery.model.persistence.CustomerInfo">
+
+        SELECT * FROM customer_info
+        WHERE email = #{email}
+
+    </select>
+
+    <insert id="addCustomer" parameterType="cn.edu.swpu.cins.netease_lottery.model.persistence.CustomerInfo">
+
+        INSERT INTO customer_info
+        (pet_name,
+         password,
+         email,
+         role,
+         last_password_reset_date
+        )VALUES
+        (#{petName},
+        #{password},
+        #{email},
+        #{role},
+        #{lastPasswordResetDate})
+
+    </insert>
+
+    <select id="selectDetailByInfoId" parameterType="int" resultType="cn.edu.swpu.cins.netease_lottery.model.persistence.CustomerDetail">
+
+        SELECT * FROM customer_detail
+        WHERE info_id = #{infoId}
+
+    </select>
+
+    <insert id="addCustomerDetail" parameterType="cn.edu.swpu.cins.netease_lottery.model.persistence.CustomerDetail">
+
+        INSERT INTO customer_detail
+        (username,
+         info_id,
+         sex,
+         age)
+         VALUES
+         (#{username},
+         #{infoId},
+         #{sex},
+         #{age})
+
+    </insert>
+
+    <update id="updateCustomerDetail" parameterType="cn.edu.swpu.cins.netease_lottery.model.persistence.CustomerDetail">
+
+        UPDATE customer_detail SET
+        username=#{username},
+        sex=#{sex},
+        age=#{age}
+        WHERE info_id=#{infoId}
+
+    </update>
+
+
+
+</mapper>
