@@ -1,6 +1,6 @@
 package cn.edu.swpu.cins.netease_lottery.service.serviceImpl;
 
-import cn.edu.swpu.cins.netease_lottery.config.JwtTokenUtil;
+import cn.edu.swpu.cins.netease_lottery.util.JwtTokenUtil;
 import cn.edu.swpu.cins.netease_lottery.dao.CustomerDao;
 import cn.edu.swpu.cins.netease_lottery.enums.ExceptionEnum;
 import cn.edu.swpu.cins.netease_lottery.exception.CustomerException;
@@ -15,7 +15,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.security.core.Authentication;
-import javax.naming.AuthenticationNotSupportedException;
+
 import java.util.Date;
 
 /**
@@ -31,12 +31,15 @@ public class CustomerServiceImpl implements CustomerService {
 
     @Autowired
     private AuthenticationManager authenticationManager;
-    
+
+    //BCrypt算法将salt随机并混入最终加密后的密码，验证时也无需单独提供之前的salt，从而无需单独处理salt问题。
     @Override
     public int addCustomer(CustomerInfo customerInfo) throws CustomerException {
         try {
+            //对密码进行加密
             BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
             final String rawPassword = customerInfo.getPassword();
+
             customerInfo.setPassword(encoder.encode(rawPassword));
             customerInfo.setLastPasswordResetDate(new Date().getTime());
             customerInfo.setRole("CUSTOMER");

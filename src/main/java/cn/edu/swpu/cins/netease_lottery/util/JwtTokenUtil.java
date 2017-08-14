@@ -1,4 +1,4 @@
-package cn.edu.swpu.cins.netease_lottery.config;
+package cn.edu.swpu.cins.netease_lottery.util;
 
 import cn.edu.swpu.cins.netease_lottery.model.view.JwtUser;
 import io.jsonwebtoken.Claims;

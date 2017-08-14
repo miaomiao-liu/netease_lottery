@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.edu.swpu.cins.netease_lottery.dao.MassageDao">
+
+<insert id="addMassage" useGeneratedKeys="true" keyProperty="id" parameterType="cn.edu.swpu.cins.netease_lottery.model.persistence.Massage">
+
+    INSERT INTO massage
+    (from_id,
+     to_id,
+     content,
+     has_read,
+     create_date,
+     conversation_id)
+     VALUES (
+     #{fromId},
+     #{toId},
+     #{content},
+     #{hasRead},
+     #{createDate},
+     #{conversationId})
+
+</insert>
+
+    <select id="getConversationDetail" parameterType="String" resultType="cn.edu.swpu.cins.netease_lottery.model.persistence.Massage">
+
+        SELECT * FROM massage
+        WHERE conversation_id = #{conversationId}
+        order by id
+
+    </select>
+</mapper>

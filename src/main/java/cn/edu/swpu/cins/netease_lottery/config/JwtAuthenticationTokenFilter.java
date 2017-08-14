@@ -1,5 +1,6 @@
 package cn.edu.swpu.cins.netease_lottery.config;
 
+import cn.edu.swpu.cins.netease_lottery.util.JwtTokenUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -19,6 +20,7 @@ import java.io.IOException;
  * JWT和Spring Security集成 ：使JWT工作在Spring 中
  * Created by miaomiao on 17-7-27.
  */
+
 public class JwtAuthenticationTokenFilter extends OncePerRequestFilter{
     @Autowired
     private UserDetailsService userDetailsService;

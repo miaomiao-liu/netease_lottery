@@ -36,6 +36,7 @@ dependencies {
 	testCompile('org.springframework.boot:spring-boot-starter-test')
 	testCompile('org.springframework.security:spring-security-test')
 	compile('io.jsonwebtoken:jjwt:0.6.0')
-	compile ('org.quartz-scheduler:quartz:2.2.1')
-
+//	compile ('org.quartz-scheduler:quartz:2.2.3')
+	compile group: 'org.quartz-scheduler', name: 'quartz', version: '2.2.2'
+	compile('org.springframework:spring-context-support')
 }

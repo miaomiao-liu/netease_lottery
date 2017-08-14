@@ -3,35 +3,21 @@ package cn.edu.swpu.cins.netease_lottery;
 import cn.edu.swpu.cins.netease_lottery.dao.CustomerDao;
 import cn.edu.swpu.cins.netease_lottery.dao.OrderDao;
 import cn.edu.swpu.cins.netease_lottery.dao.WinningDao;
-import cn.edu.swpu.cins.netease_lottery.model.persistence.CustomerInfo;
-import cn.edu.swpu.cins.netease_lottery.model.persistence.OrderDetail;
-import cn.edu.swpu.cins.netease_lottery.model.persistence.OrderInfo;
-import cn.edu.swpu.cins.netease_lottery.model.persistence.WinningDetail;
-import cn.edu.swpu.cins.netease_lottery.model.view.CustomerOrderDetail;
-import cn.edu.swpu.cins.netease_lottery.model.view.OrderIsWin;
-import cn.edu.swpu.cins.netease_lottery.model.view.OrderList;
 import cn.edu.swpu.cins.netease_lottery.service.OrderService;
-import cn.edu.swpu.cins.netease_lottery.util.GenerateWinNumber;
-import cn.edu.swpu.cins.netease_lottery.util.HandleCustomerLottery;
-import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.quartz.SchedulerException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.IdentityHashMap;
-import java.util.List;
 
 /**
  * Created by miaomiao on 17-7-29.
  */
 @RunWith(SpringRunner.class)
 @SpringBootTest
-//@Transactional
-public class TestDao {
+@Transactional
+public class TestLottery {
 
     @Autowired
     OrderDao orderDao;
@@ -41,9 +27,14 @@ public class TestDao {
     CustomerDao customerDao;
     @Autowired
     OrderService orderService;
+    @Autowired
+    WinningScheduleServiceImpl winningSchedule;
 
-    @Test
-    public void contextLoads() {
+    @org.junit.Test
+    public void contextLoads() throws SchedulerException {
+
+        winningSchedule.schedule();
+
 //        OrderInfo orderInfo = new OrderInfo();
 //        int id = 8;
 //        List<Integer> orderDetailId = new ArrayList<>();
@@ -55,9 +46,9 @@ public class TestDao {
 //        orderDao.updateOrderDetailId(orderInfo);
 
 
-        int id = 13;
-        List<OrderDetail> orderDetail = orderDao.selectOrderDetailByOrderId(id);
-        System.out.println(orderDetail);
+//        int id = 13;
+//        List<OrderDetail> orderDetail = orderDao.selectOrderDetailByOrderId(id);
+//        System.out.println(orderDetail);
 
 
 
@@ -175,6 +166,8 @@ public class TestDao {
 
 //        CustomerInfo customerInfo= customerDao.selectByPetName("miaomiao");
 //        System.out.println(customerInfo.getId());
+
+
 
     }
 }

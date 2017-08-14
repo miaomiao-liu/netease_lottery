@@ -26,16 +26,22 @@ public class WinningServiceImpl implements WinningService {
 
 
     @Override
-    public WinningDetail addWinDetail() throws WinningException {
+    public void addWinDetail() throws WinningException {
         try {
             WinningDetail winningDetail = new WinningDetail();
             List<Integer> numbers = generateWinNumber.generateNumber();
             winningDetail.setWinNumber(numbers);
             winningDetail.setBigSmall(generateWinNumber.bigSmallCompare(numbers));
             winningDao.addLotteryDetail(winningDetail);
-            return winningDetail;
         }catch (Exception e){
             throw new WinningException(ExceptionEnum.DATABASE_ERROR.getMsg());
         }
     }
+
+//    @Override
+//    public int addWinDetail(WinningDetail winningDetail) {
+//        return winningDao.addLotteryDetail(winningDetail)>0?1:0;
+//    }
+
+
 }
