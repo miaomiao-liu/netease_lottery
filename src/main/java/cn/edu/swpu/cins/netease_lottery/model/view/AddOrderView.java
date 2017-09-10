@@ -6,18 +6,20 @@ import java.util.Map;
 /**
  * Created by miaomiao on 17-7-29.
  */
-public class CustomerOrderDetail {
+public class AddOrderView {
     private int winningId;
     private List<OrderList> lottery;
     private int multiple;
+    private List<Integer> orderId;
 
-    public CustomerOrderDetail() {
+    public AddOrderView() {
     }
 
-    public CustomerOrderDetail(int winningId, List<OrderList> lottery, int multiple) {
+    public AddOrderView(int winningId, List<OrderList> lottery, int multiple, List<Integer> orderId) {
         this.winningId = winningId;
         this.lottery = lottery;
         this.multiple = multiple;
+        this.orderId = orderId;
     }
 
     public int getWinningId() {
@@ -42,5 +44,13 @@ public class CustomerOrderDetail {
 
     public void setMultiple(int multiple) {
         this.multiple = multiple;
+    }
+
+    public List<Integer> getOrderId() {
+        return orderId;
+    }
+
+    public void setOrderId(List<Integer> orderId) {
+        this.orderId = orderId;
     }
 }

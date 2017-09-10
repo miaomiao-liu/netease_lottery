@@ -4,12 +4,16 @@ import cn.edu.swpu.cins.netease_lottery.dao.CustomerDao;
 import cn.edu.swpu.cins.netease_lottery.dao.OrderDao;
 import cn.edu.swpu.cins.netease_lottery.dao.WinningDao;
 import cn.edu.swpu.cins.netease_lottery.service.OrderService;
+import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.quartz.SchedulerException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by miaomiao on 17-7-29.
@@ -27,13 +31,11 @@ public class TestLottery {
     CustomerDao customerDao;
     @Autowired
     OrderService orderService;
-    @Autowired
-    WinningScheduleServiceImpl winningSchedule;
 
-    @org.junit.Test
+    @Test
     public void contextLoads() throws SchedulerException {
 
-        winningSchedule.schedule();
+
 
 //        OrderInfo orderInfo = new OrderInfo();
 //        int id = 8;
@@ -81,7 +83,7 @@ public class TestLottery {
 //        }
 
 
-//        CustomerOrderDetail customerOrderDetail = new CustomerOrderDetail();
+//        AddOrderView customerOrderDetail = new AddOrderView();
 //        customerOrderDetail.setMultiple(2);
 //        OrderList order = new OrderList();
 //        order.setLotteryName("任二");

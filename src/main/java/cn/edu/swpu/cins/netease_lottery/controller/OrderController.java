@@ -6,7 +6,7 @@ import cn.edu.swpu.cins.netease_lottery.enums.ExceptionEnum;
 import cn.edu.swpu.cins.netease_lottery.enums.OrderEnum;
 import cn.edu.swpu.cins.netease_lottery.model.persistence.OrderDetail;
 import cn.edu.swpu.cins.netease_lottery.model.persistence.OrderInfo;
-import cn.edu.swpu.cins.netease_lottery.model.view.CustomerOrderDetail;
+import cn.edu.swpu.cins.netease_lottery.model.view.AddOrderView;
 import cn.edu.swpu.cins.netease_lottery.model.view.OrderIsWin;
 import cn.edu.swpu.cins.netease_lottery.service.OrderService;
 import cn.edu.swpu.cins.netease_lottery.util.GetUserName;
@@ -45,7 +45,7 @@ public class OrderController {
 
     //保存彩票订单
     @PostMapping("/addOrder")
-    public ResponseEntity<?> addOrder(@RequestBody CustomerOrderDetail customerOrderDetail,
+    public ResponseEntity<?> addOrder(@RequestBody AddOrderView addOrderView,
                                       HttpServletRequest request){
         try {
             String petName = getUserName.getUsernameFromRequest(request);
@@ -54,8 +54,8 @@ public class OrderController {
             if(orderService.addOrderInfo(orderInfo) ==1){
                 //添加订单时获取主键
                 int orderId = orderInfo.getId();
-                if(orderService.addOrderDetail(orderId,customerOrderDetail) ==1) {
-                    //添加订单成功 返回订单order_detail的id数组
+                if(orderService.addOrderDetail(orderId,addOrderView) ==1) {
+                    //添加订单成功 返回订单order_detail的order_info的id
                     return new ResponseEntity<Object>(orderId, HttpStatus.OK);
                 }else {
                     orderDao.deleteOrderById(orderId);
@@ -70,11 +70,11 @@ public class OrderController {
 
 
     @PostMapping("/handleOrder")
-    public ResponseEntity<?> handleOrder(@RequestBody CustomerOrderDetail customerOrderDetail,
-                                         HttpServletRequest request){
+    public ResponseEntity<?> handleOrder(@RequestParam List<Integer> orderInfoList){
         try {
-            int orderId = request.getIntHeader(id);
-            List<OrderIsWin> orderIsWinList = orderService.handleOrderDetail(orderId,customerOrderDetail);
+//            int orderId = request.getIntHeader(id);
+//            List<Integer> orderId = handleOrderView.getOrderId();
+            List<OrderIsWin> orderIsWinList = orderService.handleOrderDetail(orderInfoList);
             return new ResponseEntity<Object>(orderIsWinList,HttpStatus.OK);
         }catch (Exception e){
             return new ResponseEntity<Object>(e.getMessage(),HttpStatus.OK);

@@ -20,8 +20,6 @@ import java.util.List;
 @Service
 public class WinningServiceImpl implements WinningService {
     @Autowired
-    private GenerateWinNumber generateWinNumber;
-    @Autowired
     private WinningDao winningDao;
 
 
@@ -29,19 +27,26 @@ public class WinningServiceImpl implements WinningService {
     public void addWinDetail() throws WinningException {
         try {
             WinningDetail winningDetail = new WinningDetail();
-            List<Integer> numbers = generateWinNumber.generateNumber();
+            List<Integer> numbers = GenerateWinNumber.generateNumber();
             winningDetail.setWinNumber(numbers);
-            winningDetail.setBigSmall(generateWinNumber.bigSmallCompare(numbers));
+            winningDetail.setBigSmall(GenerateWinNumber.bigSmallCompare(numbers));
+            winningDetail.setSingleDouble(GenerateWinNumber.singleDoubleCompare(numbers));
             winningDao.addLotteryDetail(winningDetail);
         }catch (Exception e){
             throw new WinningException(ExceptionEnum.DATABASE_ERROR.getMsg());
         }
     }
 
-//    @Override
-//    public int addWinDetail(WinningDetail winningDetail) {
-//        return winningDao.addLotteryDetail(winningDetail)>0?1:0;
-//    }
+    @Override
+    public List<WinningDetail> queryLotteryList() throws WinningException {
+
+        try {
+            List<WinningDetail> list = winningDao.selectWinningList();
+            return list;
+        }catch (Exception e) {
+            throw new WinningException(ExceptionEnum.DATABASE_ERROR.getMsg());
+        }
+    }
 
 
 }

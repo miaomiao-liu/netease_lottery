@@ -1,5 +1,7 @@
 package cn.edu.swpu.cins.netease_lottery.model.persistence;
 
+import cn.edu.swpu.cins.netease_lottery.model.view.OrderList;
+
 import java.util.List;
 
 /**

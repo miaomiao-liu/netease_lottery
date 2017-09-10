@@ -3,13 +3,10 @@ package cn.edu.swpu.cins.netease_lottery.service.serviceImpl;
 import cn.edu.swpu.cins.netease_lottery.dao.OrderDao;
 import cn.edu.swpu.cins.netease_lottery.dao.WinningDao;
 import cn.edu.swpu.cins.netease_lottery.enums.ExceptionEnum;
-import cn.edu.swpu.cins.netease_lottery.enums.OrderEnum;
 import cn.edu.swpu.cins.netease_lottery.exception.OrderException;
 import cn.edu.swpu.cins.netease_lottery.model.persistence.OrderDetail;
 import cn.edu.swpu.cins.netease_lottery.model.persistence.OrderInfo;
-import cn.edu.swpu.cins.netease_lottery.model.view.CustomerOrderDetail;
-import cn.edu.swpu.cins.netease_lottery.model.view.OrderIsWin;
-import cn.edu.swpu.cins.netease_lottery.model.view.OrderList;
+import cn.edu.swpu.cins.netease_lottery.model.view.*;
 import cn.edu.swpu.cins.netease_lottery.service.OrderService;
 import cn.edu.swpu.cins.netease_lottery.util.HandleCustomerLottery;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,7 +15,6 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.Set;
 
 /**
  * Created by miaomiao on 17-7-28.
@@ -46,16 +42,16 @@ public class OrderServiceImpl implements OrderService {
 
     //添加订单详情   return ?
     @Override
-    public int addOrderDetail(int orderId,CustomerOrderDetail customerOrderDetail) throws OrderException {
+    public int addOrderDetail(int orderId,AddOrderView addOrderView) throws OrderException {
         try{
-            int multiple = customerOrderDetail.getMultiple();
-            int winningId = customerOrderDetail.getWinningId();
+            int multiple = addOrderView.getMultiple();
+            int winningId = addOrderView.getWinningId();
             List<Integer> idList = new ArrayList<>();
             OrderInfo orderInfo = new OrderInfo();
-            for(OrderList order : customerOrderDetail.getLottery()) {
+            for(OrderList order : addOrderView.getLottery()) {
                 String lotteryName = order.getLotteryName();
-                List<Integer> lotteryNumberList = order.getLotteryNumber();
-                OrderDetail orderDetail = new OrderDetail(orderId,winningId,lotteryName,lotteryNumberList,multiple);
+                List<Integer> lotteryNumber = order.getLotteryNumber();
+                OrderDetail orderDetail = new OrderDetail(orderId,winningId,lotteryName,lotteryNumber,multiple);
                 orderDao.addOrderDetail(orderDetail);
                 idList.add(orderDetail.getId());
                 //把订单详情 id数组 添加到order_info中
@@ -69,26 +65,32 @@ public class OrderServiceImpl implements OrderService {
         }
     }
 
-    //处理订单
+    //处理订单 ??
     @Override
-    public List<OrderIsWin> handleOrderDetail(int orderInfoId,CustomerOrderDetail customerOrderDetail) throws OrderException{
+    public List<OrderIsWin> handleOrderDetail(List<Integer> orderInfoId) throws OrderException{
         try {
-            List<Integer> orderDetailId = orderDao.selectOrderDetailId(orderInfoId).getOrderDetailId();
-            int winningId = customerOrderDetail.getWinningId();
             List<OrderIsWin> orderIsWinObject = new ArrayList();
             OrderDetail orderDetail = new OrderDetail();
-            //本期随机生成的中奖号码
-            List<Integer> numbers = winningDao.selectWinningNumber(winningId).getWinNumber();
-            for(int i=0; i < orderDetailId.size(); i++){
-                OrderList orderList = customerOrderDetail.getLottery().get(i);
-                OrderIsWin orderIsWin = handleCustomerLottery.handleLottery(orderList,numbers,customerOrderDetail.getMultiple());
-                //把orderIsWin添加到数据库 id?
-                orderDetail.setId(orderDetailId.get(i));
-                orderDetail.setIsWin(orderIsWin.getIsWin());
-                orderDetail.setWinGrade(orderIsWin.getWinGrade());
-                orderDetail.setWinMoney(orderIsWin.getWinMoney());
-                orderDao.updateOrderDetailAll(orderDetail);
-                orderIsWinObject.add(orderIsWin);
+            PreOrderDetail preOrderDetail;
+
+            for (int orderid : orderInfoId) {
+                //OrderDetail表中的id数组，对应OrderInfo表中id的order_detail_id
+                List<Integer> orderDetailId = orderDao.selectOrderDetailId(orderid).getOrderDetailId();
+                for (int i = 0; i < orderDetailId.size(); i++) {
+                    int id = orderDetailId.get(i);
+                    preOrderDetail = orderDao.selectOrderDetailById(id);
+                    //本期随机生成的中奖号码
+                    int winningId = preOrderDetail.getWinningId() ;
+                    List<Integer> numbers = winningDao.selectWinningNumber(winningId).getWinNumber();
+                    OrderIsWin orderIsWin = handleCustomerLottery.handleLottery(preOrderDetail, numbers);
+                    //把orderIsWin添加到数据库 id?
+                    orderDetail.setId(orderDetailId.get(i));
+                    orderDetail.setIsWin(orderIsWin.getIsWin());
+                    orderDetail.setWinGrade(orderIsWin.getWinGrade());
+                    orderDetail.setWinMoney(orderIsWin.getWinMoney());
+                    orderDao.updateOrderDetailAll(orderDetail);
+                    orderIsWinObject.add(orderIsWin);
+                }
             }
             return orderIsWinObject;
         }catch (Exception e){

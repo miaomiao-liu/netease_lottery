@@ -8,10 +8,12 @@
 
         INSERT INTO winning_detail
         (win_number,
-        big_small
+        big_small,
+        single_double
         )VALUES (
         #{winNumber,typeHandler=cn.edu.swpu.cins.netease_lottery.typehandler.StringArrayTypeHandler},
-        #{bigSmall})
+        #{bigSmall},
+        #{singleDouble})
 
     </insert>
 
@@ -25,10 +27,15 @@
     <select id="selectWinningNumber" parameterType="int" resultMap="winningResultMap">
 
         SELECT
-        id, win_number,big_small
+        win_number,big_small,single_double
         FROM winning_detail
         WHERE id = #{id}
 
     </select>
 
+    <select id="selectWinningList" resultMap="winningResultMap">
+
+        SELECT * FROM winning_detail
+
+    </select>
 </mapper>

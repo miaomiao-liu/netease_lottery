@@ -9,14 +9,9 @@ public class WinningDetail {
     private int id;
     private List<Integer> winNumber;
     private String bigSmall;
+    private String singleDouble;
 
     public WinningDetail() {
-    }
-
-    public WinningDetail(int id, List<Integer> winNumber, String bigSmall) {
-        this.id = id;
-        this.winNumber = winNumber;
-        this.bigSmall = bigSmall;
     }
 
     public int getId() {
@@ -41,5 +36,13 @@ public class WinningDetail {
 
     public void setBigSmall(String bigSmall) {
         this.bigSmall = bigSmall;
+    }
+
+    public String getSingleDouble() {
+        return singleDouble;
+    }
+
+    public void setSingleDouble(String singleDouble) {
+        this.singleDouble = singleDouble;
     }
 }

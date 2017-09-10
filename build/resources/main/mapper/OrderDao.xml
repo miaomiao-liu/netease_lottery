@@ -87,11 +87,31 @@
 
     </resultMap>
 
+    <resultMap id="preOrderDetailResultMap" type="cn.edu.swpu.cins.netease_lottery.model.view.PreOrderDetail">
+
+        <result typeHandler="cn.edu.swpu.cins.netease_lottery.typehandler.StringArrayTypeHandler"
+                javaType="list" jdbcType="VARCHAR" column="lottery_number" property="lotteryNumber" />
+
+    </resultMap>
+
 
     <select id="selectOrderDetailByOrderId" parameterType="int" resultMap="orderDetailResultMap">
 
         SELECT * FROM order_detail
         WHERE order_id = #{orderId}
+
+    </select>
+
+    <select id="selectOrderDetailById" parameterType="int" resultMap="preOrderDetailResultMap">
+
+        SELECT
+        order_id,
+        winning_id,
+        lottery_name,
+        lottery_number,
+        multiple
+        FROM order_detail
+        WHERE id = #{id}
 
     </select>
 

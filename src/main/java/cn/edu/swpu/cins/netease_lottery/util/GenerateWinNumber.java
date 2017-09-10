@@ -13,7 +13,7 @@ import java.util.Random;
 public class GenerateWinNumber {
 
     //生成中奖号码数组  五个不重复的数
-    public List<Integer> generateNumber(){
+    public static List<Integer> generateNumber(){
         Random random = new Random();
         List<Integer> numbers = new ArrayList<>();
         int num;
@@ -27,7 +27,7 @@ public class GenerateWinNumber {
     }
 
     //判断大小比
-    public String bigSmallCompare(List<Integer> numbers){
+    public static String bigSmallCompare(List<Integer> numbers){
         StringBuffer sb = new StringBuffer();
         int big = 0;
         int small = 0;
@@ -43,5 +43,25 @@ public class GenerateWinNumber {
         sb.append(small);
         String bigSmall = sb.toString();
         return bigSmall;
+    }
+
+
+    //判断奇偶比
+    public static String singleDoubleCompare(List<Integer> numbers){
+        StringBuffer sb = new StringBuffer();
+        int singleNumber = 0;
+        int  doubleNumber = 0;
+
+        for (int num : numbers) {
+            if(num % 2 ==0)
+                doubleNumber++;
+            else
+                singleNumber++;
+        }
+        sb.append(singleNumber);
+        sb.append(":");
+        sb.append(doubleNumber);
+        String singleDouble = sb.toString();
+        return singleDouble;
     }
 }

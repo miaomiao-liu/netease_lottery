@@ -14,9 +14,11 @@ public interface WinningService {
 //    List<Integer> generateLotteryNumber();
 
     //保存中奖号码及大小比
-    public void addWinDetail() throws WinningException;
+    void addWinDetail() throws WinningException;
 
-//    public int addWinDetail(WinningDetail winningDetail);
+//  int addWinDetail(WinningDetail winningDetail);
+
+    List<WinningDetail> queryLotteryList() throws WinningException;
 }
 
 

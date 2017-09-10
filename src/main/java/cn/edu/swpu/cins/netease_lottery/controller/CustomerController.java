@@ -43,13 +43,8 @@ public class CustomerController {
     @PostMapping("/register")
     public ResponseEntity<?> customerRegister(@RequestBody CustomerInfo customerInfo){
         try {
-            if(customerDao.selectByPetName(customerInfo.getPetName()) != null)
-                return new ResponseEntity<Object>(RegisterEnum.REPEAT_USERNAME.getMsg(), HttpStatus.OK);
-            if(customerDao.selectByEmail(customerInfo.getEmail()) !=null)
-                return new ResponseEntity<Object>(RegisterEnum.REPEAT_EMAIL.getMsg(),HttpStatus.OK);
-            if(customerService.addCustomer(customerInfo) == 1)
-                return new ResponseEntity<Object>(RegisterEnum.SUCCESS_SAVE.getMsg(),HttpStatus.OK);
-            return new ResponseEntity<Object>(RegisterEnum.FAIL_SAVE.getMsg(),HttpStatus.OK);
+           customerService.addCustomer(customerInfo);
+           return new ResponseEntity<Object>(RegisterEnum.SUCCESS_SAVE.getMsg(),HttpStatus.OK);
         }catch (Exception e){
             return new ResponseEntity<Object>(e.getMessage(),HttpStatus.OK);
         }

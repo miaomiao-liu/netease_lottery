@@ -1,5 +1,6 @@
 package cn.edu.swpu.cins.netease_lottery.service.serviceImpl;
 
+import cn.edu.swpu.cins.netease_lottery.enums.RegisterEnum;
 import cn.edu.swpu.cins.netease_lottery.util.JwtTokenUtil;
 import cn.edu.swpu.cins.netease_lottery.dao.CustomerDao;
 import cn.edu.swpu.cins.netease_lottery.enums.ExceptionEnum;
@@ -8,6 +9,8 @@ import cn.edu.swpu.cins.netease_lottery.model.persistence.CustomerInfo;
 import cn.edu.swpu.cins.netease_lottery.model.view.JwtUserFactory;
 import cn.edu.swpu.cins.netease_lottery.service.CustomerService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -36,6 +39,10 @@ public class CustomerServiceImpl implements CustomerService {
     @Override
     public int addCustomer(CustomerInfo customerInfo) throws CustomerException {
         try {
+            if(customerDao.selectByPetName(customerInfo.getPetName()) != null)
+                throw new CustomerException(RegisterEnum.REPEAT_USERNAME.getMsg());
+            if(customerDao.selectByEmail(customerInfo.getEmail()) !=null)
+                throw new CustomerException(RegisterEnum.REPEAT_EMAIL.getMsg());
             //对密码进行加密
             BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
             final String rawPassword = customerInfo.getPassword();
@@ -43,7 +50,10 @@ public class CustomerServiceImpl implements CustomerService {
             customerInfo.setPassword(encoder.encode(rawPassword));
             customerInfo.setLastPasswordResetDate(new Date().getTime());
             customerInfo.setRole("CUSTOMER");
-            return customerDao.addCustomer(customerInfo);
+            if(customerDao.addCustomer(customerInfo) == 1){
+                return 1;
+            }
+            throw new CustomerException(RegisterEnum.FAIL_SAVE.getMsg());
         }catch (Exception e){
             throw new CustomerException(ExceptionEnum.DATABASE_ERROR.getMsg());
         }

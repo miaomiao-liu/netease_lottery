@@ -1,11 +1,8 @@
-package cn.edu.swpu.cins.netease_lottery.service.serviceImpl;
+package cn.edu.swpu.cins.netease_lottery.config.quartz;
 
-import cn.edu.swpu.cins.netease_lottery.service.WinningScheduleService;
-import cn.edu.swpu.cins.netease_lottery.util.WinningJob;
 import org.quartz.*;
 import org.quartz.impl.StdSchedulerFactory;
 
-import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
 
@@ -17,16 +14,17 @@ import org.springframework.stereotype.Service;
  * Created by miaomiao on 17-8-5.
  */
 @Service
-public class WinningScheduleServiceImpl implements WinningScheduleService{
+public class MySchedule {
+
 
     public void schedule() throws SchedulerException {
 
         JobDetail jobDetail = JobBuilder
-                .newJob(WinningJob.class)
+                .newJob(MyJob.class)
                 .withIdentity("job1","group1")
                 .build();
 
-        CronTrigger trigger = TriggerBuilder.newTrigger()
+        CronTrigger Trigger = TriggerBuilder.newTrigger()
                 .withIdentity("myTrigger","group1")
                 .startNow()
                 .withSchedule(CronScheduleBuilder.cronSchedule("0/10 * 8-22 * * ? *"))
@@ -35,7 +33,7 @@ public class WinningScheduleServiceImpl implements WinningScheduleService{
         SchedulerFactory sfact = new StdSchedulerFactory();
         Scheduler scheduler = sfact.getScheduler();
         scheduler.start();
-        scheduler.scheduleJob(jobDetail,trigger);
+        scheduler.scheduleJob(jobDetail,Trigger);
     }
 
 }
