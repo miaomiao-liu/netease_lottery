@@ -3,7 +3,6 @@ package cn.edu.swpu.cins.netease_lottery.controller;
 import cn.edu.swpu.cins.netease_lottery.dao.WinningDao;
 import cn.edu.swpu.cins.netease_lottery.model.persistence.WinningDetail;
 import cn.edu.swpu.cins.netease_lottery.service.WinningService;
-import cn.edu.swpu.cins.netease_lottery.config.quartz.MySchedule;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
@@ -26,8 +25,8 @@ public class WinningController {
 
     @Autowired
     WinningService winningService;
-    @Autowired
-    MySchedule winningSchedule;
+//    @Autowired
+//    MySchedule winningSchedule;
     @Autowired
     WinningDao winningDao;
     @Value("${NeteaseLottery.header}")
@@ -37,7 +36,7 @@ public class WinningController {
     @GetMapping("/generateNumber")
     public ResponseEntity<?> generateLotteryDetail(HttpServletRequest request){
         try{
-            winningSchedule.schedule();
+//            winningSchedule.schedule();
             int winningId = request.getIntHeader(id);
 //          WinningDetail winningDetail = winningService.addWinDetail();
             WinningDetail winningDetail = winningDao.selectWinningNumber(winningId);

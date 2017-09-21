@@ -1,6 +1,5 @@
 package cn.edu.swpu.cins.netease_lottery.config.quartz;
 
-import cn.edu.swpu.cins.netease_lottery.exception.WinningException;
 import cn.edu.swpu.cins.netease_lottery.service.WinningService;
 import org.quartz.Job;
 import org.quartz.JobExecutionContext;
@@ -23,32 +22,16 @@ public class MyJob implements Job,Serializable{
 
     @Autowired
     private WinningService winningService;
-//    @Autowired
-//    private WinningDao winningDao;
-//    @Autowired
-//    GenerateWinNumber generateWinNumber;
-
-
-    public MyJob() {
-    }
-
-
-
-
-//            //产生中奖号码
-//        WinningDetail winningDetail = new WinningDetail();
-//        List<Integer> numbers = generateWinNumber.generateNumber();
-//        winningDetail.setWinNumber(numbers);
-//        winningDetail.setBigSmall(generateWinNumber.bigSmallCompare(numbers));
-//        winningDao.addLotteryDetail(winningDetail);
 
     @Override
     public void execute(JobExecutionContext context) throws JobExecutionException {
-        System.out.println("Hello World!");
-        try {
-            winningService.addWinDetail();
-        } catch (WinningException e) {
-            e.printStackTrace();
-        }
+    try {
+        winningService.addWinDetail();
+    } catch (Exception e) {
+        e.printStackTrace();
     }
+}
+
+
+
 }

@@ -22,7 +22,6 @@ public class WinningServiceImpl implements WinningService {
     @Autowired
     private WinningDao winningDao;
 
-
     @Override
     public void addWinDetail() throws WinningException {
         try {
