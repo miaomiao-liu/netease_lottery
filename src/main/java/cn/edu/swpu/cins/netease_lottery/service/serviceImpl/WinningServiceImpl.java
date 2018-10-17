@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Supplier;
 
 /**
  *
@@ -25,7 +26,8 @@ public class WinningServiceImpl implements WinningService {
     @Override
     public void addWinDetail() throws WinningException {
         try {
-            WinningDetail winningDetail = new WinningDetail();
+            Supplier<WinningDetail> winningDetailSupplier = WinningDetail::new;
+            WinningDetail winningDetail = winningDetailSupplier.get();
             List<Integer> numbers = GenerateWinNumber.generateNumber();
             winningDetail.setWinNumber(numbers);
             winningDetail.setBigSmall(GenerateWinNumber.bigSmallCompare(numbers));

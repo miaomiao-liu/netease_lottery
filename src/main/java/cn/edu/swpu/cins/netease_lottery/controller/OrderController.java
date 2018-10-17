@@ -51,7 +51,7 @@ public class OrderController {
             String petName = getUserName.getUsernameFromRequest(request);
             OrderInfo orderInfo = new OrderInfo();
             orderInfo.setPetName(petName);
-            if(orderService.addOrderInfo(orderInfo) ==1){
+            if(orderService.addOrderInfo(orderInfo) == 1){
                 //添加订单时获取主键
                 int orderId = orderInfo.getId();
                 if(orderService.addOrderDetail(orderId,addOrderView) ==1) {

@@ -3,7 +3,7 @@ spring:
    # settings:
     #  number_format: 0.##
   datasource:
-    password: miaomiao
+    password: root
     username: root
     driver-class-name: com.mysql.jdbc.Driver
     url: jdbc:mysql://127.0.0.1:3306/net_ease_lottery?useUnicode=true&characterEncoding=utf8&useSSL=false

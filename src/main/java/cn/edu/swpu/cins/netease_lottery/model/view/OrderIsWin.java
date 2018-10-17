@@ -4,6 +4,7 @@ package cn.edu.swpu.cins.netease_lottery.model.view;
  * Created by miaomiao on 17-7-28.
  */
 public class OrderIsWin {
+    private int wins;
     private String isWin;
     private int winGrade;
     private int winMoney;
@@ -11,7 +12,8 @@ public class OrderIsWin {
     public OrderIsWin() {
     }
 
-    public OrderIsWin(String isWin, int winGrade, int winMoney) {
+    public OrderIsWin(int wins, String isWin, int winGrade, int winMoney) {
+        this.wins = wins;
         this.isWin = isWin;
         this.winGrade = winGrade;
         this.winMoney = winMoney;
@@ -39,5 +41,13 @@ public class OrderIsWin {
 
     public void setWinMoney(int winMoney) {
         this.winMoney = winMoney;
+    }
+
+    public int getWins() {
+        return wins;
+    }
+
+    public void setWins(int wins) {
+        this.wins = wins;
     }
 }

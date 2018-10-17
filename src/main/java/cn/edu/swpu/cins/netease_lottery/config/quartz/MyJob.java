@@ -17,8 +17,6 @@ import java.io.Serializable;
 @Component
 public class MyJob implements Job,Serializable{
     private static final long serialVersionUID = 1L;
-    private static final Logger logger= LoggerFactory.getLogger(MyJob.class);
-
 
     @Autowired
     private WinningService winningService;

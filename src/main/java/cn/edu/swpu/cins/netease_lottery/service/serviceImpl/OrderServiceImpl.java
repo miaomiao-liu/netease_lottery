@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.function.Supplier;
 
 /**
  * Created by miaomiao on 17-7-28.
@@ -47,7 +48,8 @@ public class OrderServiceImpl implements OrderService {
             int multiple = addOrderView.getMultiple();
             int winningId = addOrderView.getWinningId();
             List<Integer> idList = new ArrayList<>();
-            OrderInfo orderInfo = new OrderInfo();
+            Supplier<OrderInfo> orderInfoSupplier = OrderInfo::new;
+            OrderInfo orderInfo = orderInfoSupplier.get();
             for(OrderList order : addOrderView.getLottery()) {
                 String lotteryName = order.getLotteryName();
                 List<Integer> lotteryNumber = order.getLotteryNumber();
@@ -70,12 +72,13 @@ public class OrderServiceImpl implements OrderService {
     public List<OrderIsWin> handleOrderDetail(List<Integer> orderInfoId) throws OrderException{
         try {
             List<OrderIsWin> orderIsWinObject = new ArrayList();
-            OrderDetail orderDetail = new OrderDetail();
+            Supplier<OrderDetail> orderDetailSupplier = OrderDetail::new;
+            OrderDetail orderDetail = orderDetailSupplier.get();
             PreOrderDetail preOrderDetail;
 
-            for (int orderid : orderInfoId) {
+            for (int orderId : orderInfoId) {
                 //OrderDetail表中的id数组，对应OrderInfo表中id的order_detail_id
-                List<Integer> orderDetailId = orderDao.selectOrderDetailId(orderid).getOrderDetailId();
+                List<Integer> orderDetailId = orderDao.selectOrderDetailId(orderId).getOrderDetailId();
                 for (int i = 0; i < orderDetailId.size(); i++) {
                     int id = orderDetailId.get(i);
                     preOrderDetail = orderDao.selectOrderDetailById(id);

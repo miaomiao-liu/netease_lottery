@@ -1,9 +1,7 @@
 package cn.edu.swpu.cins.netease_lottery.util;
 
 import cn.edu.swpu.cins.netease_lottery.model.view.OrderIsWin;
-import cn.edu.swpu.cins.netease_lottery.model.view.OrderList;
 import cn.edu.swpu.cins.netease_lottery.model.view.PreOrderDetail;
-import javafx.beans.WeakInvalidationListener;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -14,278 +12,275 @@ import java.util.List;
 @Component
 public class HandleCustomerLottery {
 
-    public OrderIsWin handleLottery(PreOrderDetail preOrderDetail,
-                                    List<Integer> winNumber){
+    public OrderIsWin handleLottery(OrderIsWin orderIsWin,LotteryFunction lotteryFunction){
+        return lotteryFunction.handleLottery(orderIsWin);
+    }
 
+    public OrderIsWin handleLottery(PreOrderDetail preOrderDetail,
+                                List<Integer> winNumbers){
         String lotteryName = preOrderDetail.getLotteryName();
         List<Integer> lotteryNumber = preOrderDetail.getLotteryNumber();
-        int multiple = preOrderDetail.getMultiple();
-        OrderIsWin orderIsWin=new OrderIsWin();
+        final int multiple = preOrderDetail.getMultiple();
+        OrderIsWin orderIsWin = new OrderIsWin();
         //与中奖号码的匹配数
-
-
-        int wins=0;
-        //本号码中了几注
-        int winGrade=0;
-        int winMoney;
-        int numberNum = 0;
-
+        int wins = 0;
         for(int num : lotteryNumber){
-           for(int winNum : winNumber ){
-               if(num == winNum){
-                   wins++;
-               }
-           }
-            numberNum++;
+            for(int winNum : winNumbers ){
+                if(num == winNum){
+                    wins++;
+                }
+            }
         }
+
+        orderIsWin.setIsWin("否");
+        //本号码中了几注
+        orderIsWin.setWinGrade(0);
+        orderIsWin.setWinMoney(0);
+        orderIsWin.setWins(wins);
 
         //如果玩法为“任二”
         if(lotteryName.equals("任二")){
-            if(wins >= 2){
-                orderIsWin.setIsWin("是");
-                for(wins--; wins > 0; wins--){
-                    winGrade += wins;
+            return handleLottery(orderIsWin,(handled) -> {
+                int matches = handled.getWins();
+                int winGrade = handled.getWinGrade();
+                if(matches >= 2){
+                    handled.setIsWin("是");
+                    for(matches--; matches > 0; matches--){
+                        winGrade += matches;
+                    }
+                    handled.setWinGrade(winGrade);
+                    handled.setWinMoney(6 * winGrade * multiple);
                 }
-                winMoney = 6*winGrade*multiple;
-                orderIsWin.setWinGrade(winGrade);
-                orderIsWin.setWinMoney(winMoney);
-            }else {
-                orderIsWin.setIsWin("否");
-                orderIsWin.setWinGrade(0);
-                orderIsWin.setWinMoney(0);
-            }
+                return handled;
+            });
         }
 
         //如果玩法为“任三“
         if(lotteryName.equals("任三")) {
-            if (wins >= 3) {
-                winGrade = wins * (wins - 1) * (wins - 2) / 6;
-                winMoney = 19 * winGrade * multiple;
-                orderIsWin.setIsWin("是");
-                orderIsWin.setWinGrade(winGrade);
-                orderIsWin.setWinMoney(winMoney);
-            } else {
-                orderIsWin.setIsWin("否");
-                orderIsWin.setWinGrade(0);
-                orderIsWin.setWinMoney(0);
-            }
+            return handleLottery(orderIsWin,(handled) -> {
+                int matches = handled.getWins();
+                int winGrade;
+                if (matches >= 3) {
+                    winGrade = matches * (matches - 1) * (matches - 2) / 6;
+                    handled.setIsWin("是");
+                    handled.setWinGrade(winGrade);
+                    handled.setWinMoney(19 * winGrade * multiple);
+                }
+                return handled;
+            });
+
         }
 
         //如果玩法为“任四”
         if(lotteryName.equals("任四")){
-            if(wins >= 4){
-                if(wins==4) {
-                    orderIsWin.setWinGrade(1);
-                    orderIsWin.setWinMoney(78);
+            return handleLottery(orderIsWin,(handled) -> {
+                int matches = handled.getWins();
+                if(matches >= 4){
+                    if(matches==4) {
+                        handled.setWinGrade(1);
+                        handled.setWinMoney(78);
+                    }
+                    if(matches==5){
+                        handled.setWinGrade(5);
+                        handled.setWinMoney(390);
+                    }
+                    handled.setIsWin("是");
                 }
-                if(wins==5){
-                    orderIsWin.setWinGrade(5);
-                    orderIsWin.setWinMoney(390);
-                }
-                orderIsWin.setIsWin("是");
-            }else {
-            orderIsWin.setIsWin("否");
-            orderIsWin.setWinGrade(0);
-            orderIsWin.setWinMoney(0);
-            }
+                return handled;
+            });
+
         }
 
         //任五
         if(lotteryName.equals("任五")) {
-            if (wins == 5) {
-                winMoney = 540 * multiple;
-                orderIsWin.setIsWin("是");
-                orderIsWin.setWinGrade(1);
-                orderIsWin.setWinMoney(winMoney);
-            } else {
-                orderIsWin.setIsWin("否");
-                orderIsWin.setWinGrade(0);
-                orderIsWin.setWinMoney(0);
-            }
+            return handleLottery(orderIsWin,(handled) -> {
+                int matches = handled.getWins();
+                if (matches == 5) {
+                    handled.setIsWin("是");
+                    handled.setWinGrade(1);
+                    handled.setWinMoney(540 * multiple);
+                }
+                return handled;
+            });
         }
 
         //任六
         if(lotteryName.equals("任六")) {
-            if (wins == 5) {
-                for (; numberNum > 5; numberNum--) {
-                    winGrade++;
+            return handleLottery(orderIsWin,(handled) ->{
+                int matches = handled.getWins();
+                int winGrade = handled.getWinGrade();
+                int numberNum = lotteryNumber.size();
+                if (matches == 5) {
+                    for (; numberNum > 5; numberNum--) {
+                        winGrade++;
+                    }
+                    handled.setWinMoney(90 * winGrade * multiple);
+                    handled.setIsWin("是");
+                    handled.setWinGrade(winGrade);
                 }
-                winMoney = 90 * winGrade * multiple;
-                orderIsWin.setWinMoney(winMoney);
-                orderIsWin.setIsWin("是");
-                orderIsWin.setWinGrade(winGrade);
-            } else {
-                orderIsWin.setIsWin("否");
-                orderIsWin.setWinGrade(0);
-                orderIsWin.setWinMoney(0);
-            }
+                return handled;
+            });
         }
 
         //任七
         if(lotteryName.equals("任七")) {
-            if (wins == 5) {
-                numberNum = numberNum - 6;
-                for (; numberNum > 0; numberNum--) {
-                    winGrade += numberNum;
+            return handleLottery(orderIsWin,(handled) ->{
+                int matches = handled.getWins();
+                int winGrade = handled.getWinGrade();
+                int numberNum = lotteryNumber.size();
+                if (matches == 5) {
+                    numberNum = numberNum - 6;
+                    for (; numberNum > 0; numberNum--) {
+                        winGrade += numberNum;
+                    }
+                    handled.setWinMoney(26 * winGrade * multiple);
+                    handled.setIsWin("是");
+                    handled.setWinGrade(winGrade);
                 }
-                winMoney = 26 * winGrade * multiple;
-                orderIsWin.setWinMoney(winMoney);
-                orderIsWin.setIsWin("是");
-                orderIsWin.setWinGrade(winGrade);
-            } else {
-                orderIsWin.setIsWin("否");
-                orderIsWin.setWinGrade(0);
-                orderIsWin.setWinMoney(0);
-            }
+                return handled;
+            });
+
         }
 
         //任八
         if(lotteryName.equals("任八")){
-            if(wins==5){
-                if(numberNum == 8){
-                    winGrade = 1;
-                }else if(numberNum == 9){
-                    winGrade = 4;
-                }else if(numberNum ==10){
-                    winGrade = 10;
-                }else if(numberNum ==11){
-                    winGrade = 20;
+            return handleLottery(orderIsWin,(handled) -> {
+                int matches = handled.getWins();
+                int winGrade = handled.getWinGrade();
+                int numberNum = lotteryNumber.size();
+                if(matches==5){
+                    if(numberNum == 8){
+                        winGrade = 1;
+                    }else if(numberNum == 9){
+                        winGrade = 4;
+                    }else if(numberNum ==10){
+                        winGrade = 10;
+                    }else if(numberNum ==11){
+                        winGrade = 20;
+                    }
+                    handled.setWinMoney(9 * winGrade * multiple);
+                    handled.setIsWin("是");
+                    handled.setWinGrade(winGrade);
                 }
-                winMoney = 9*winGrade*multiple ;
-                orderIsWin.setWinMoney(winMoney);
-                orderIsWin.setIsWin("是");
-                orderIsWin.setWinGrade(winGrade);
-            }else {
-                orderIsWin.setIsWin("否");
-                orderIsWin.setWinGrade(0);
-                orderIsWin.setWinMoney(0);
-            }
+                return handled;
+            });
         }
 
         //前一
         if(lotteryName.equals("前一")){
-            int count = 0;
-            int firstNum = winNumber.get(0);
-            for(int num : lotteryNumber){
-                if(num == firstNum){
-                    count++;
+            return handleLottery(orderIsWin,(handled) ->{
+                int count = 0;
+                int firstNum = winNumbers.get(0);
+                for(int num : lotteryNumber){
+                    if(num == firstNum){
+                        count++;
+                    }
                 }
-            }
-            if(count==1){
-                winMoney = 13*multiple;
-                orderIsWin.setWinMoney(winMoney);
-                orderIsWin.setWinGrade(1);
-                orderIsWin.setIsWin("是");
-            }else {
-                orderIsWin.setIsWin("否");
-                orderIsWin.setWinGrade(0);
-                orderIsWin.setWinMoney(0);
-            }
+                if(count==1){
+                    handled.setWinMoney(13 * multiple);
+                    handled.setWinGrade(1);
+                    handled.setIsWin("是");
+                }
+                return handled;
+            });
         }
 
 
 
-        List<Integer> preTwo = winNumber.subList(0,2);
-        //前二组选 ？？
+        List<Integer> preTwo = winNumbers.subList(0,2);
+        //前二组选
         if(lotteryName.equals("前二组选")) {
-            wins = 0;
-            for (int num : lotteryNumber) {
-                for (int winNum : preTwo) {
-                    if (num == winNum) {
-                        wins++;
+            return handleLottery(orderIsWin,(handled) -> {
+                int matches = 0;
+                for (int num : lotteryNumber) {
+                    for (int winNum : preTwo) {
+                        if (num == winNum) {
+                            matches++;
+                        }
                     }
                 }
-            }
-            if (wins == 2) {
-                winMoney = 65 * multiple;
-                orderIsWin.setWinMoney(winMoney);
-                orderIsWin.setIsWin("是");
-                orderIsWin.setWinGrade(1);
-            } else {
-                orderIsWin.setIsWin("否");
-                orderIsWin.setWinGrade(0);
-                orderIsWin.setWinMoney(0);
-            }
+                if (matches == 2) {
+                    handled.setWinMoney(65 * multiple);
+                    handled.setIsWin("是");
+                    handled.setWinGrade(1);
+                }
+                return handled;
+            });
+
         }
 
 
         //前二直选
         if(lotteryName.equals("前二直选")){
-            wins = 0;
-            int i = 0;
-            for (int winNum : preTwo){
-                for (;i < lotteryNumber.size(); i++) {
-                    if (winNum == lotteryNumber.get(i)) {
-                        wins++;
-                        break;
+            return handleLottery(orderIsWin,(handled) ->{
+                int matches = 0;
+                int i = 0;
+                for (int winNum : preTwo){
+                    for (;i < lotteryNumber.size(); i++) {
+                        if (winNum == lotteryNumber.get(i)) {
+                            matches++;
+                            break;
+                        }
                     }
+                    i++;
                 }
-                i++;
-            }
+                if(matches==2){
+                    handled.setWinMoney(130 * multiple);
+                    handled.setIsWin("是");
+                    handled.setWinGrade(1);
+                }
+                return handled;
+            });
 
-            if(wins==2){
-                winMoney = 130*multiple;
-                orderIsWin.setWinMoney(winMoney);
-                orderIsWin.setIsWin("是");
-                orderIsWin.setWinGrade(1);
-            }else {
-                orderIsWin.setIsWin("否");
-                orderIsWin.setWinGrade(0);
-                orderIsWin.setWinMoney(0);
-            }
         }
 
 
-        List<Integer> preThree = winNumber.subList(0, 3);
+        List<Integer> preThree = winNumbers.subList(0, 3);
         //前三组选
-       if(lotteryName.equals("前三组选")) {
-           wins = 0;
-           for (int num : lotteryNumber) {
-               for (int winNum : preThree) {
-                   if (num == winNum) {
-                       wins++;
-                   }
-               }
-           }
-           if (wins == 3) {
-               winMoney = 195 * multiple;
-               orderIsWin.setWinMoney(winMoney);
-               orderIsWin.setIsWin("是");
-               orderIsWin.setWinGrade(1);
-           } else {
-               orderIsWin.setIsWin("否");
-               orderIsWin.setWinGrade(0);
-               orderIsWin.setWinMoney(0);
-           }
-       }
+        if(lotteryName.equals("前三组选")) {
+            return  handleLottery(orderIsWin,(handled) -> {
+                int matches = 0;
+                for (int num : lotteryNumber) {
+                    for (int winNum : preThree) {
+                        if (num == winNum) {
+                            matches++;
+                        }
+                    }
+                }
+                if (matches == 3) {
+                    handled.setWinMoney(195 * multiple);
+                    handled.setIsWin("是");
+                    handled.setWinGrade(1);
+                }
+                return handled;
+            });
+
+        }
 
 
         //前三直选
         if(lotteryName.equals("前三直选")){
-            wins = 0;
-            int i = 0;
-            for (int winNum : preThree){
-                for (;i < lotteryNumber.size(); i++) {
-                    if (winNum == lotteryNumber.get(i)) {
-                        wins++;
-                        break;
+            return handleLottery(orderIsWin,(handled) ->{
+                int matches = 0;
+                int i = 0;
+                for (int winNum : preThree){
+                    for (;i < lotteryNumber.size(); i++) {
+                        if (winNum == lotteryNumber.get(i)) {
+                            matches++;
+                            break;
+                        }
                     }
+                    i++;
                 }
-                i++;
-            }
-            if(wins==3){
-                winMoney = 1170*multiple;
-                orderIsWin.setWinMoney(winMoney);
-                orderIsWin.setIsWin("是");
-                orderIsWin.setWinGrade(1);
-            }else {
-                orderIsWin.setIsWin("否");
-                orderIsWin.setWinGrade(0);
-                orderIsWin.setWinMoney(0);
-            }
+                if(matches==3){
+                    handled.setWinMoney(1170 * multiple);
+                    handled.setIsWin("是");
+                    handled.setWinGrade(1);
+                }
+                return handled;
+            });
         }
-
-
         return orderIsWin;
+
     }
 }
